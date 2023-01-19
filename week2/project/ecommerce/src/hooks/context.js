@@ -5,8 +5,8 @@ export const provideContext = createContext();
 
 const ProductContext = ({ children }) => {
   const URL = "https://fakestoreapi.com/products";
-  const { allProducts, isLoading, serverError } = useFetch(URL);
-  const { categories } = useFetch(`${URL}/categories`);
+  const { data: allProducts, isLoading, serverError } = useFetch(URL);
+  const { data: categories } = useFetch(`${URL}/categories`);
   const [products, setProducts] = useState([]);
   //children is the Products component which sent as props from App.js
   //inside the function ProductContext
@@ -15,24 +15,26 @@ const ProductContext = ({ children }) => {
     setProducts(allProducts);
   }, [allProducts]);
 
-  const showAllProducts = (e) => {
-    const allProductsShowing = allProducts;
-    setProducts(allProductsShowing);
-  };
-
   const filterProducts = (e, cate) => {
     //filter out the products to that related to clicked button
     const filteredProducts = allProducts.filter(
       (product) => product.category === cate
     );
-    setProducts(filteredProducts);
+    filteredProducts.length === 0
+      ? setProducts(allProducts)
+      : setProducts(filteredProducts);
     //activate the clicked button
-    const btn = Array.from(e.target.parentNode.children);
-    btn.forEach((btn) => {
+    activeButton(e);
+  };
+
+  const activeButton = (e) => {
+    const buttons = Array.from(e.target.parentNode.children);
+    buttons.forEach((btn) => {
       btn.classList.remove("active");
     });
     e.target.classList.add("active");
   };
+  if (categories.length === 4) categories.unshift("showAllProducts");
 
   // transfer the the list of products after updated + the function filterProducts
   // we place the two parameters inside {}
@@ -40,7 +42,6 @@ const ProductContext = ({ children }) => {
     products,
     categories,
     filterProducts,
-    showAllProducts,
     isLoading,
     serverError,
     URL,

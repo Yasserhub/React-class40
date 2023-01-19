@@ -4,13 +4,11 @@ import Category from "./Category"
 
 
 function Categories() {
-  const {showAllProducts, categories} = useContext(provideContext)
+  const {categories} = useContext(provideContext)
   
   return (
     <div className="categories_container"> 
-    <button className="category" onClick={(e)=> showAllProducts(e)} >
-            All-Categories
-          </button>
+    
       { categories &&
         (categories.map((category, index) => (
           <Category key={index} category={category} />
